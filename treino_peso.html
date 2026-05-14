@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Treino + Peso - Kaique</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{--bg:#f5f5f0;--s1:#fff;--s2:#f0f0eb;--border:#ddddd6;--green:#3a7a00;--teal:#006a58;--amber:#8a5c00;--red:#b82020;--text:#1a1a14;--muted:#888880;--ok-bg:#eef8d8;--ok-br:#a8d040;--ok-tx:#2a5a00;--warn-bg:#fff8d8;--warn-br:#d0a040;--warn-tx:#7a5000;--bad-bg:#fde8e8;--bad-br:#d06060;--bad-tx:#8a1010;--info-bg:#e8f4ff;--info-br:#6090d0;--info-tx:#1a3a6a;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;line-height:1.55;max-width:480px;margin:0 auto;}
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 14px 0;position:sticky;top:0;z-index:100;}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ht{font-size:17px;font-weight:700;}.ht span{color:var(--green);}
+.hd{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);}
+.main-tabs{display:flex;border-top:1px solid var(--border);}
+.main-tab{flex:1;font-family:'Space Mono',monospace;font-size:11px;padding:10px 4px;text-align:center;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-weight:700;}
+.main-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.view{display:none;}.view.active{display:block;}
+.content{padding:12px 12px 80px;}
+.day-tabs{background:var(--s1);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:57px;z-index:90;}
+.day-tabs::-webkit-scrollbar{display:none;}
+.day-tabs button{flex-shrink:0;font-family:'Space Mono',monospace;font-size:10px;padding:9px 12px;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;}
+.day-tabs button.active{color:var(--green);border-bottom-color:var(--green);font-weight:700;}
+.day-banner{border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid;}
+.ban-push{background:var(--info-bg);border-color:var(--info-br);}
+.ban-pull{background:#f0e8ff;border-color:#9060d0;}
+.ban-lower{background:#fff0e8;border-color:#d09060;}
+.ban-fut{background:var(--ok-bg);border-color:var(--ok-br);}
+.ban-rest{background:var(--s2);border-color:var(--border);}
+.ban-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.ban-push .ban-label{color:var(--info-tx);}
+.ban-pull .ban-label{color:#3a1a6a;}
+.ban-lower .ban-label{color:#6a3a1a;}
+.ban-fut .ban-label{color:var(--ok-tx);}
+.ban-rest .ban-label{color:var(--muted);}
+.ban-name{font-size:15px;font-weight:700;}
+.ban-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.prog-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.prog-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.prog-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.prog-chip{font-family:'Space Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;background:var(--ok-bg);color:var(--ok-tx);border:1px solid var(--ok-br);}
+.ex-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;}
+.ex-head{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;user-select:none;}
+.ex-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);width:20px;flex-shrink:0;font-weight:700;}
+.ex-info{flex:1;}
+.ex-name{font-size:13px;font-weight:600;}
+.ex-sets{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);}
+.ex-tag{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:10px;flex-shrink:0;}
+.tag-ok{background:var(--ok-bg);color:var(--ok-tx);border:1px solid var(--ok-br);}
+.tag-warn{background:var(--warn-bg);color:var(--warn-tx);border:1px solid var(--warn-br);}
+.ex-chev{color:var(--muted);font-size:11px;flex-shrink:0;transition:transform .2s;}
+.ex-card.open .ex-chev{transform:rotate(180deg);}
+.ex-body{display:none;border-top:1px solid var(--border);}
+.ex-card.open .ex-body{display:block;}
+.stats-row{display:flex;gap:8px;padding:12px 13px;background:var(--s2);}
+.stat{flex:1;text-align:center;}
+.stat-v{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;}
+.stat-l{font-size:9px;color:var(--muted);}
+.tip-box{padding:10px 13px;font-size:13px;line-height:1.5;color:var(--muted);border-bottom:1px solid var(--border);}
+.sub-box{padding:10px 13px;background:var(--warn-bg);border-top:1px solid var(--warn-br);}
+.sub-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--warn-tx);margin-bottom:4px;text-transform:uppercase;}
+.alert-box{padding:10px 13px;background:var(--bad-bg);border-top:1px solid var(--bad-br);}
+.alert-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--bad-tx);margin-bottom:4px;text-transform:uppercase;}
+.note-box{padding:10px 13px;background:var(--info-bg);border-top:1px solid var(--info-br);}
+.note-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--info-tx);margin-bottom:4px;text-transform:uppercase;}
+.box-text{font-size:12px;line-height:1.4;}
+.load-section{padding:12px 13px;border-top:1px solid var(--border);}
+.load-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.load-prev{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.load-prev strong{color:var(--text);}
+.load-prev .up{color:var(--green);font-weight:700;}
+.load-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.load-input{flex:1;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--text);text-align:center;}
+.load-input:focus{outline:none;border-color:var(--green);background:var(--s1);}
+.load-unit{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);flex-shrink:0;}
+.btn-save-load{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;}
+.load-done{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--ok-bg);border-radius:7px;margin-bottom:4px;}
+.load-done-val{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--green);}
+.load-done-lbl{font-size:12px;color:var(--ok-tx);}
+.btn-edit-load{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:auto;}
+.cardio-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.cardio-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.cardio-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);}
+.cardio-row:last-child{border-bottom:none;}
+.cardio-val{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);}
+.special-card{border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--info-br);background:var(--info-bg);}
+.special-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--info-tx);margin-bottom:6px;}
+.special-text{font-size:13px;line-height:1.5;}
+.peso-input-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.peso-input-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.peso-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.peso-num{flex:1;font-family:'Space Mono',monospace;font-size:22px;font-weight:700;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:center;}
+.peso-num:focus{outline:none;border-color:var(--green);background:var(--s1);}
+.peso-unit{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);}
+.btn-save-peso{width:100%;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:7px;padding:10px;cursor:pointer;}
+.peso-saved{background:var(--ok-bg);border:1px solid var(--ok-br);border-radius:7px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.peso-saved-val{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--green);}
+.peso-saved-info{font-size:12px;color:var(--ok-tx);}
+.btn-edit-peso{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.week-stats{display:flex;gap:8px;margin-bottom:10px;}
+.ws-item{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
+.ws-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);}
+.ws-val.ok{color:var(--green);}.ws-val.warn{color:var(--amber);}.ws-val.bad{color:var(--red);}
+.ws-label{font-size:9px;color:var(--muted);}
+.chart-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.chart-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.chart-empty{text-align:center;padding:40px 0;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);}
+.chart-labels{display:flex;justify-content:space-between;margin-top:4px;}
+.chart-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);text-align:center;flex:1;}
+.hist-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.hist-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.hist-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.hist-row:last-child{border-bottom:none;}
+.hist-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);width:60px;}
+.hist-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;flex:1;}
+.hist-diff{font-family:'Space Mono',monospace;font-size:11px;}
+.diff-down{color:var(--green);}.diff-up{color:var(--red);}.diff-same{color:var(--muted);}
+.hdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-ok{background:var(--ok-br);}.dot-bad{background:var(--bad-br);}.dot-neu{background:var(--muted);}
+.crit-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.crit-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.crit-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.crit-row:last-child{border-bottom:none;}
+.crit-action{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;}
+.crit-ok{color:var(--green);}.crit-warn{color:var(--amber);}.crit-bad{color:var(--red);}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="ht">Treino <span>+</span> Peso</div>
+    <div class="hd" id="hdr-date"></div>
+  </div>
+  <div class="main-tabs">
+    <button class="main-tab active" data-view="treino" onclick="switchMain(this.dataset.view)">&#128170; Treino</button>
+    <button class="main-tab" data-view="peso" onclick="switchMain(this.dataset.view)">&#9883; Peso</button>
+  </div>
+</div>
+<div class="view active" id="view-treino">
+  <div class="day-tabs" id="day-tabs"></div>
+  <div class="content" id="treino-content"></div>
+</div>
+<div class="view" id="view-peso">
+  <div class="content" id="peso-content"></div>
+</div>
+<script>
+
+const DAYS=[
+  {id:'seg',label:'SEG',name:'Segunda - PUSH',sub:'Peito + Ombros + Triceps',type:'push',
+   exs:[
+    {id:'s1',n:'01',name:'Supino inclinado c/ halteres',sets:'4',reps:'8-10',rest:'90s',tag:'ok',
+     tip:'Halteres permitem rotacao natural do punho. Desca ate 90 graus. Controle a descida em 2-3s.',
+     note:'Drop-set no ultimo set: reduza 30% da carga nas ultimas 6-8 reps sem pausa.'},
+    {id:'s2',n:'02',name:'Supino maquina (chest press)',sets:'3',reps:'10-12',rest:'75s',tag:'ok',
+     tip:'Pegada neutra ou 45 graus. Melhor que Smith para peitoral.'},
+    {id:'s3',n:'03',name:'Crucifixo no cabo (polia media)',sets:'3',reps:'12-15',rest:'60s',tag:'ok',
+     tip:'Tensao constante no peitoral. Se pouco tempo: superset com abdomen.'},
+    {id:'s4',n:'04',name:'Shoulder press c/ halteres',sets:'4',reps:'10-12',rest:'75s',tag:'ok',
+     tip:'Pegada neutra. Cotovelo nao desce abaixo da linha do ombro.'},
+    {id:'s5',n:'05',name:'Elevacao lateral c/ halteres',sets:'4',reps:'15-20',rest:'45s',tag:'ok',
+     tip:'6-10 kg. Incline levemente o tronco para frente. Foco no cap do deltoide.',
+     note:'Rest-pause no ultimo set: 10 reps normais, pausa 10s, mais 5 reps.'},
+    {id:'s6',n:'06',name:'Triceps corda no cabo',sets:'3',reps:'12-15',rest:'60s',tag:'warn',
+     tip:'Corda muito melhor que barra reta para o cotovelo.',
+     sub:'Triceps coice com halter - pegada neutra, cotovelo fixo ao lado do tronco.'},
+    {id:'s7',n:'07',name:'Triceps coice c/ halter',sets:'3',reps:'12',rest:'60s',tag:'ok',
+     tip:'Cotovelo fixo. Isolamento sem impacto articular.'},
+   ],
+   cardio:{title:'LISS pos-treino',rows:[['Duracao','25 min'],['Inclinacao','8%'],['Velocidade','5,5 km/h'],['Tipo','Esteira - nao corra']]}
+  },
+  {id:'ter',label:'TER',name:'Terca - LOWER A',sub:'Quadriceps + Panturrilha + Abdomen',type:'lower',
+   exs:[
+    {id:'t1',n:'01',name:'Agachamento livre (barra)',sets:'4',reps:'6-8',rest:'120s',tag:'ok',
+     tip:'Profundidade paralela ou abaixo. Ative o gluteo na subida.',
+     sub:'Cotovelo na barra doer? Use squat pad ou substitua por goblet com kettlebell.'},
+    {id:'t2',n:'02',name:'Leg Press 45',sets:'4',reps:'10-12',rest:'90s',tag:'ok',
+     tip:'Pes no meio da plataforma. Desca ate 90 graus no joelho.',
+     note:'Drop-set no ultimo set: 2 quedas de carga sem pausa.'},
+    {id:'t3',n:'03',name:'Extensora (cadeira)',sets:'3',reps:'15-20',rest:'60s',tag:'ok',
+     tip:'Pausa 1s no topo. Superset com prancha se pouco tempo.'},
+    {id:'t4',n:'04',name:'Afundo (lunge) c/ halteres',sets:'3',reps:'12/lado',rest:'75s',tag:'ok',
+     tip:'Pegada neutra nos halteres. Quad + gluteo.'},
+    {id:'t5',n:'05',name:'Panturrilha em pe (maquina)',sets:'4',reps:'15-20',rest:'45s',tag:'ok',
+     tip:'Amplitude completa. Pausa 2s no topo.'},
+    {id:'t6',n:'06',name:'Elevacao de pernas na barra',sets:'4',reps:'12-15',rest:'60s',tag:'ok',
+     tip:'Prioritario para abdomen inferior. Pernas retas ou joelhos levemente dobrados.'},
+    {id:'t7',n:'07',name:'Prancha isometrica',sets:'3',reps:'45-60s',rest:'45s',tag:'ok',
+     tip:'Apoio nos cotovelos. +5s por semana de progressao.'},
+   ],
+   cardio:{title:'LISS pos-treino',rows:[['Duracao','20 min'],['Inclinacao','7%'],['Velocidade','5,5 km/h'],['Tipo','Esteira - nao corra']]}
+  },
+  {id:'qua',label:'QUA',name:'Quarta - Futevolei',sub:'06h00 em jejum - sem musculacao',type:'fut',
+   exs:[],cardio:null,
+   special:'Futevolei as 6h = HIIT natural de alta qualidade. Restricao WellHub (1 check-in/dia). Musculacao + futevolei = overtraining.'
+  },
+  {id:'qui',label:'QUI',name:'Quinta - PULL',sub:'Costas + Biceps + Abdomen',type:'pull',
+   exs:[
+    {id:'q1',n:'01',name:'Pulldown - pegada supinada ou triangulo',sets:'4',reps:'10-12',rest:'90s',tag:'warn',
+     tip:'Pegada supinada larga ou triangulo neutro. Retraia a escapula antes de puxar.',
+     alert:'PROIBIDO: Puxada aberta pronada - alto risco para epicondilite. Use supinada ou triangulo.',
+     sub:'Ainda doe? Use apenas triangulo neutro - o grip de pulling mais seguro.'},
+    {id:'q2',n:'02',name:'Remada unilateral c/ halter',sets:'4',reps:'10/lado',rest:'75s',tag:'ok',
+     tip:'Apoio no banco. Pegada neutra. Puxa cotovelo para tras, nao para cima.'},
+    {id:'q3',n:'03',name:'Remada maquina (chest-supported)',sets:'3',reps:'12-15',rest:'60s',tag:'ok',
+     tip:'Peito apoiado elimina compensacao lombar. Pegada neutra preferivel.'},
+    {id:'q4',n:'04',name:'Pulldown unilateral no cabo',sets:'3',reps:'12/lado',rest:'60s',tag:'ok',
+     tip:'Pegada neutra. Otimo para o detalhe lateral do grande dorsal.'},
+    {id:'q5',n:'05',name:'Face pull (polia alta, corda)',sets:'4',reps:'15-20',rest:'45s',tag:'ok',
+     tip:'Puxe para a face, cotovelos para cima. Deltoide posterior + saude do ombro. Nao pule esse.'},
+    {id:'q6',n:'06',name:'Rosca martelo c/ halteres',sets:'3',reps:'12',rest:'60s',tag:'ok',
+     tip:'Pegada neutra = zero stress no epicondilo. Ativa biceps + braquial + braquirradial.'},
+    {id:'q7',n:'07',name:'Rosca na maquina ou cabo (EZ)',sets:'3',reps:'12-15',rest:'60s',tag:'warn',
+     alert:'PROIBIDO: Barra reta - supinacao forcada = maior agressor do epicondilo.',
+     sub:'Ainda doe? Rosca concentrada com halter - apoio no joelho, pegada neutra.'},
+    {id:'q8',n:'08',name:'Crunch cabo + Elevacao pernas (superset)',sets:'3',reps:'15+12',rest:'45s',tag:'ok',
+     tip:'Superset sem pausa: crunch com carga, elevacao de pernas.'},
+   ],
+   cardio:{title:'LISS pos-treino',rows:[['Duracao','25 min'],['Inclinacao','8%'],['Velocidade','5,5 km/h'],['Tipo','Esteira - nao corra']]}
+  },
+  {id:'sex',label:'SEX',name:'Sexta - LOWER B',sub:'Posterior + Gluteo + Ombro Isolado',type:'lower',
+   exs:[
+    {id:'x1',n:'01',name:'Stiff / RDL c/ halteres',sets:'4',reps:'8-10',rest:'120s',tag:'warn',
+     tip:'Prefira halteres (pegada neutra). Joelhos levemente flexionados.',
+     sub:'Usar barra? Use straps de pulso - elimina grip force que agrava o cotovelo.'},
+    {id:'x2',n:'02',name:'Flexora (mesa deitada)',sets:'4',reps:'12-15',rest:'75s',tag:'ok',
+     tip:'Isola posterior de coxa. Drop-set no ultimo set.'},
+    {id:'x3',n:'03',name:'Hip thrust com barra',sets:'4',reps:'10-12',rest:'90s',tag:'ok',
+     tip:'Principal exercicio de gluteo. Use hip pad. Pausa 2s no topo. Progrida carga aqui.'},
+    {id:'x4',n:'04',name:'Bulgaro c/ halteres',sets:'3',reps:'10/lado',rest:'90s',tag:'ok',
+     tip:'Pe traseiro no banco. Pegada neutra. Gluteo + quad.'},
+    {id:'x5',n:'05',name:'Panturrilha sentada',sets:'4',reps:'20-25',rest:'45s',tag:'ok',
+     tip:'Ativa soleo (diferente da em pe). Combine as duas ao longo da semana.'},
+    {id:'x6',n:'06',name:'Elevacao lateral cabo (unilateral)',sets:'3',reps:'15-20/lado',rest:'45s',tag:'ok',
+     tip:'Tensao constante melhor que halter. Incline levemente para o lado oposto.'},
+    {id:'x7',n:'07',name:'Reverse fly (voador invertido)',sets:'3',reps:'15-20',rest:'45s',tag:'ok',
+     tip:'Deltoide posterior + romboide. Essencial para postura.'},
+    {id:'x8',n:'08',name:'Prancha + Crunch obliquo (superset)',sets:'3',reps:'45s+15',rest:'45s',tag:'ok',
+     tip:'Superset sem pausa. Abdomen 4x/semana.'},
+   ],
+   cardio:{title:'Bicicleta pos-treino - LISS',rows:[['Duracao','20 min'],['Intensidade','Leve-moderada'],['FC alvo','menor que 75% FCmax']]}
+  },
+  {id:'sab',label:'SAB',name:'Sabado - Futevolei + Treino',sub:'Treino 10h + Futevolei',type:'fut',
+   exs:[],cardio:null,
+   special:'Use para repetir a sessao mais fraca (PULL ou PUSH). Nunca musculacao + futevolei no mesmo dia. Cafe as 8h (tapioca 100g) antes do treino das 10h.'
+  },
+  {id:'dom',label:'DOM',name:'Domingo - Descanso ativo',sub:'Corrida leve ou caminhada',type:'rest',
+   exs:[],cardio:null,
+   special:'Corrida leve pace 7 min/km por 30-40 min. Ou caminhada se pernas pesadas. Deload previsto: semana de ~22 de julho.'
+  },
+];
+
+let S=(()=>{try{return JSON.parse(localStorage.getItem('ktreino_v1'))||{loads:{},weights:[]};}catch(e){return{loads:{},weights:[]};}})();
+let curDay=(()=>{const d=new Date().getDay();return[6,0,1,2,3,4,5][d];})();
+
+function save(){localStorage.setItem('ktreino_v1',JSON.stringify(S));}
+function today(){return new Date().toISOString().slice(0,10);}
+function fmtD(iso){const p=iso.split('-');return p[2]+'/'+p[1];}
+
+function switchMain(view){
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(view==='peso') renderPeso();
+}
+
+function renderTreino(){
+  document.getElementById('day-tabs').innerHTML=DAYS.map((d,i)=>
+    '<button data-i="'+i+'" onclick="switchDay(+this.dataset.i)" class="'+(i===curDay?'active':'')+'">'+d.label+'</button>'
+  ).join('');
+  const day=DAYS[curDay];
+  const bc={push:'ban-push',pull:'ban-pull',lower:'ban-lower',fut:'ban-fut',rest:'ban-rest'}[day.type];
+  let h='<div class="day-banner '+bc+'"><div class="ban-label">'+day.type.toUpperCase()+'</div><div class="ban-name">'+day.name+'</div><div class="ban-sub">'+day.sub+'</div></div>';
+  h+='<div class="prog-card"><div class="prog-title">Progressao de carga</div><div style="font-size:13px;color:var(--muted)">Completou todas as series e reps com boa tecnica:</div><div class="prog-chips"><span class="prog-chip">Compostos +2,5 kg</span><span class="prog-chip">Isolados +1,25 kg</span><span class="prog-chip">Maquinas +1 pino</span></div></div>';
+  if(day.special) h+='<div class="special-card"><div class="special-lbl">Nota do dia</div><div class="special-text">'+day.special+'</div></div>';
+  day.exs.forEach(ex=>{ h+=renderEx(day.id,ex); });
+  if(day.cardio){
+    h+='<div class="cardio-card"><div class="cardio-title">'+day.cardio.title+'</div>';
+    day.cardio.rows.forEach(([l,v])=>{ h+='<div class="cardio-row"><span>'+l+'</span><span class="cardio-val">'+v+'</span></div>'; });
+    h+='</div>';
+  }
+  document.getElementById('treino-content').innerHTML=h;
+}
+
+function renderEx(did,ex){
+  const key=did+'_'+ex.id;
+  const loads=S.loads[key]||[];
+  const last=loads.length>0?loads[loads.length-1]:null;
+  const prev=loads.length>1?loads[loads.length-2]:null;
+  const todayL=(last&&last.date===today())?last:null;
+  const tc=ex.tag==='ok'?'tag-ok':'tag-warn';
+  const tl=ex.tag==='ok'?'SEGURO':'MODERADO';
+
+  let body='<div class="stats-row"><div class="stat"><div class="stat-v">'+ex.sets+'x</div><div class="stat-l">SERIES</div></div><div class="stat"><div class="stat-v">'+ex.reps+'</div><div class="stat-l">REPS</div></div><div class="stat"><div class="stat-v">'+ex.rest+'</div><div class="stat-l">DESCANSO</div></div></div>';
+  if(ex.tip) body+='<div class="tip-box">'+ex.tip+'</div>';
+  if(ex.alert) body+='<div class="alert-box"><div class="alert-lbl">Atencao</div><div class="box-text">'+ex.alert+'</div></div>';
+  if(ex.sub) body+='<div class="sub-box"><div class="sub-lbl">Se doer o cotovelo</div><div class="box-text">'+ex.sub+'</div></div>';
+  if(ex.note) body+='<div class="note-box"><div class="note-lbl">Tecnica avancada</div><div class="box-text">'+ex.note+'</div></div>';
+
+  body+='<div class="load-section"><div class="load-title">Registro de carga</div>';
+  if(last){
+    const refKg=todayL?todayL.kg:last.kg;
+    const diff=prev?(refKg-prev.kg).toFixed(1):null;
+    body+='<div class="load-prev">Ultima: <strong>'+last.kg+' kg</strong>'+(prev?' | Anterior: '+prev.kg+' kg'+(diff&&parseFloat(diff)>0?' | <span class="up">+'+diff+' kg</span>':diff&&parseFloat(diff)<0?' | '+diff+' kg':''):'')+'</div>';
+  }
+  if(todayL){
+    body+='<div class="load-done"><div><div class="load-done-val">'+todayL.kg+' kg</div><div class="load-done-lbl">Registrado hoje</div></div><button class="btn-edit-load" data-did="'+did+'" data-ex="'+ex.id+'" onclick="editLoad(this.dataset.did,this.dataset.ex)">editar</button></div>';
+  } else {
+    body+='<div class="load-row"><input class="load-input" type="number" id="li-'+did+'-'+ex.id+'" placeholder="'+(last?last.kg:'kg')+'" inputmode="decimal" step="0.5"><span class="load-unit">kg</span><button class="btn-save-load" data-did="'+did+'" data-ex="'+ex.id+'" onclick="saveLoad(this.dataset.did,this.dataset.ex)">Salvar</button></div>';
+  }
+  body+='</div>';
+
+  return '<div class="ex-card" id="ec-'+did+'-'+ex.id+'"><div class="ex-head" data-did="'+did+'" data-ex="'+ex.id+'" onclick="togEx(this.dataset.did,this.dataset.ex)"><span class="ex-num">'+ex.n+'</span><div class="ex-info"><div class="ex-name">'+ex.name+'</div><div class="ex-sets">'+ex.sets+' x '+ex.reps+' | '+ex.rest+'</div></div><span class="ex-tag '+tc+'">'+tl+'</span><span class="ex-chev">&#9660;</span></div><div class="ex-body" id="eb-'+did+'-'+ex.id+'">'+body+'</div></div>';
+}
+
+function togEx(did,exId){
+  const card=document.getElementById('ec-'+did+'-'+exId);
+  const body=document.getElementById('eb-'+did+'-'+exId);
+  if(!card||!body)return;
+  const open=card.classList.contains('open');
+  card.classList.toggle('open',!open);
+  body.style.display=open?'none':'block';
+}
+
+function saveLoad(did,exId){
+  const inp=document.getElementById('li-'+did+'-'+exId);
+  if(!inp)return;
+  const kg=parseFloat(inp.value);
+  if(!kg||kg<=0){showToast('Informe o peso usado.');return;}
+  const key=did+'_'+exId;
+  if(!S.loads[key])S.loads[key]=[];
+  S.loads[key]=S.loads[key].filter(l=>l.date!==today());
+  S.loads[key].push({date:today(),kg});
+  if(S.loads[key].length>10)S.loads[key]=S.loads[key].slice(-10);
+  save();renderTreino();
+  setTimeout(()=>{const c=document.getElementById('ec-'+did+'-'+exId);if(c&&!c.classList.contains('open'))togEx(did,exId);},50);
+}
+
+function editLoad(did,exId){
+  const key=did+'_'+exId;
+  S.loads[key]=(S.loads[key]||[]).filter(l=>l.date!==today());
+  save();renderTreino();
+  setTimeout(()=>{const c=document.getElementById('ec-'+did+'-'+exId);if(c&&!c.classList.contains('open'))togEx(did,exId);},50);
+}
+
+function switchDay(idx){curDay=idx;renderTreino();}
+
+function renderPeso(){
+  const weights=S.weights||[];
+  const sorted=[...weights].sort((a,b)=>a.date.localeCompare(b.date));
+  const todayW=weights.find(w=>w.date===today());
+
+  const last7=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const iso=d.toISOString().slice(0,10);
+    const found=sorted.find(w=>w.date===iso);
+    last7.push({date:iso,kg:found?found.kg:null});
+  }
+  const filled=last7.filter(d=>d.kg!==null);
+  const avg7=filled.length>0?(filled.reduce((s,d)=>s+d.kg,0)/filled.length).toFixed(1):null;
+
+  const prev7=[];
+  for(let i=13;i>=7;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const iso=d.toISOString().slice(0,10);
+    const found=sorted.find(w=>w.date===iso);
+    prev7.push(found?found.kg:null);
+  }
+  const pf=prev7.filter(v=>v!==null);
+  const avgPrev=pf.length>0?pf.reduce((s,v)=>s+v,0)/pf.length:null;
+  const wkDiff=(avg7&&avgPrev)?(parseFloat(avg7)-avgPrev).toFixed(2):null;
+  const totalDiff=avg7?(parseFloat(avg7)-91.8).toFixed(1):null;
+
+  function wkStatus(d){
+    if(d===null)return'';
+    const v=parseFloat(d);
+    if(v>=-0.65&&v<=-0.45)return'ok';
+    if(v<-0.65||(v>=-0.44&&v<=-0.1))return'warn';
+    return'bad';
+  }
+  const ws=wkStatus(wkDiff);
+
+  let h='';
+
+  // Input
+  h+='<div class="peso-input-card"><div class="peso-input-title">Peso hoje - jejum</div>';
+  if(todayW){
+    h+='<div class="peso-saved"><div><div class="peso-saved-val">'+todayW.kg+' kg</div><div class="peso-saved-info">Registrado hoje</div></div><button class="btn-edit-peso" onclick="editPeso()">editar</button></div>';
+  } else {
+    h+='<div class="peso-row"><input class="peso-num" type="number" id="peso-input" placeholder="91.0" inputmode="decimal" step="0.1"><span class="peso-unit">kg</span></div><button class="btn-save-peso" onclick="savePeso()">Salvar peso de hoje</button>';
+  }
+  h+='</div>';
+
+  // Metricas
+  h+='<div class="week-stats">'
+    +'<div class="ws-item"><div class="ws-val'+(avg7?' ok':'')+'">'+( avg7||'--')+(avg7?' kg':'')+'</div><div class="ws-label">Media 7 dias</div></div>'
+    +'<div class="ws-item"><div class="ws-val'+( wkDiff?' '+ws:'')+'">'+( wkDiff?(parseFloat(wkDiff)>0?'+':'')+wkDiff+' kg':'--')+'</div><div class="ws-label">Variacao semanal</div></div>'
+    +'<div class="ws-item"><div class="ws-val'+( totalDiff?parseFloat(totalDiff)<0?' ok':' bad':'')+'">'+( totalDiff?(parseFloat(totalDiff)>0?'+':'')+totalDiff+' kg':'--')+'</div><div class="ws-label">vs inicio (91,8)</div></div>'
+    +'</div>';
+
+  // Grafico
+  h+='<div class="chart-card"><div class="chart-title">Ultimos 7 dias</div>';
+  if(filled.length>=2){
+    const kgs=last7.map(d=>d.kg);
+    const valid=kgs.filter(k=>k!==null);
+    const minK=Math.min(...valid)-0.3;
+    const maxK=Math.max(...valid)+0.3;
+    const rng=maxK-minK||1;
+    const W=100/7, H=120;
+    let pts='',dots='';
+    last7.forEach((d,i)=>{
+      if(d.kg===null)return;
+      const x=(i+0.5)*W, y=H-((d.kg-minK)/rng*H);
+      pts+=x+'%,'+y+' ';
+      dots+='<circle cx="'+x+'%" cy="'+y+'" r="4" fill="var(--green)"/>';
+      dots+='<text x="'+x+'%" y="'+(y-10)+'" text-anchor="middle" font-family="Space Mono" font-size="10" fill="var(--text)" font-weight="bold">'+d.kg+'</text>';
+    });
+    h+='<svg width="100%" height="'+H+'" style="overflow:visible"><polyline points="'+pts+'" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linejoin="round"/>'+dots+'</svg>';
+    h+='<div class="chart-labels">'+last7.map(d=>'<div class="chart-label">'+fmtD(d.date)+'</div>').join('')+'</div>';
+  } else {
+    h+='<div class="chart-empty">Registre pelo menos 2 dias para ver o grafico</div>';
+  }
+  h+='</div>';
+
+  // Criterios
+  h+='<div class="crit-card"><div class="crit-title">Criterios de ajuste</div>';
+  const crits=[
+    ['-0,45 a -0,65 kg/sem','Manter','crit-ok'],
+    ['-0,1 a -0,3 kg por 2 sem','-150 kcal dom','crit-warn'],
+    ['Estagnado 2 semanas','Protocolo plato','crit-warn'],
+    ['>-1 kg/sem + cansaco','+200 kcal carbo','crit-bad'],
+    ['Performance -10%','Semana deload','crit-bad'],
+  ];
+  crits.forEach(([sit,acao,cls])=>{
+    h+='<div class="crit-row"><span>'+sit+'</span><span class="crit-action '+cls+'">'+acao+'</span></div>';
+  });
+  h+='</div>';
+
+  // Historico
+  if(sorted.length>0){
+    h+='<div class="hist-card"><div class="hist-title">Historico</div>';
+    [...sorted].reverse().slice(0,30).forEach((w,i,arr)=>{
+      const nxt=arr[i+1];
+      const diff=nxt?(w.kg-nxt.kg).toFixed(1):null;
+      const dc=diff===null?'diff-same':parseFloat(diff)<0?'diff-down':'diff-up';
+      const dStr=diff===null?'--':(parseFloat(diff)>0?'+':'')+diff+' kg';
+      const dotc=diff===null?'dot-neu':parseFloat(diff)<=-0.05?'dot-ok':parseFloat(diff)>=0.05?'dot-bad':'dot-neu';
+      h+='<div class="hist-row"><span class="hist-date">'+fmtD(w.date)+'</span><span class="hist-val">'+w.kg+' kg</span><span class="hist-diff '+dc+'">'+dStr+'</span><span class="hdot '+dotc+'"></span></div>';
+    });
+    h+='</div>';
+  }
+
+  document.getElementById('peso-content').innerHTML=h;
+}
+
+function savePeso(){
+  const inp=document.getElementById('peso-input');
+  if(!inp)return;
+  const kg=parseFloat(inp.value);
+  if(!kg||kg<40||kg>200){showToast('Peso invalido.');return;}
+  S.weights=(S.weights||[]).filter(w=>w.date!==today());
+  S.weights.push({date:today(),kg});
+  S.weights.sort((a,b)=>a.date.localeCompare(b.date));
+  save();renderPeso();showToast('Peso salvo: '+kg+' kg');
+}
+
+function editPeso(){
+  S.weights=(S.weights||[]).filter(w=>w.date!==today());
+  save();renderPeso();
+}
+
+function showToast(msg){
+  let t=document.getElementById('_t');
+  if(!t){t=document.createElement('div');t.id='_t';t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1a14;color:#fff;padding:10px 18px;border-radius:20px;font-size:12px;font-family:Space Mono,monospace;z-index:500;white-space:nowrap;transition:opacity .3s;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
+}
+
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}).toUpperCase();
+renderTreino();
+</script>
+</body>
+</html>
